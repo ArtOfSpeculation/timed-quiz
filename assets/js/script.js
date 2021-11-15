@@ -1,8 +1,11 @@
+var containerEl = document.querySelector(".container");
 var startButtonEl = document.querySelector("#start-btn");
 var questionTextEl = document.querySelector(".question-text");
 var answerButtonsEl = document.querySelector("#answer-buttons");
 var textContainerEl = document.querySelector(".text-container");
+var formEl = document.querySelector("form");
 var revealIfAnswerWasCorrectEl = document.querySelector(".revealIfAnswerWasCorrect");
+var submitScoreButtonEl = document.querySelector(".submit-score");
 var questionsArray = [
     {
         question: "Commonly used data types do NOT include:",
@@ -60,7 +63,8 @@ var endGame = function() {
     textContainerEl.innerText = "Your final score is " + currentScore +" out of " + questionsArray.length + ".";
     textContainerEl.classList.add("left");
     textContainerEl.classList.remove("hidden");
-    console.log(textContainerEl)
+    formEl.classList.remove("hidden");
+
 };
 
 var clearQuestion = function() {
@@ -115,9 +119,18 @@ var nextQuestion = function(question) {
         answerButtonsEl.classList.remove("hidden");
         questionTextEl.classList.add("question");
         console.log(questionTextEl);
-        // while (currentQuestionNumber < questionsArray.length) {
             nextQuestion(questionsArray[currentQuestionNumber]);
-        // }
     };
 
+    var visitLeaderboard = function (){
+        console.log("Here is the leaderboard")
+        
+        while(containerEl.firstChild) {
+            console.log("removed something");
+            containerEl.removeChild(containerEl.firstChild);
+        }
+        questionTextEl.innerText = "High scores"
+    }
+
+submitScoreButtonEl.addEventListener("click", visitLeaderboard)
 startButtonEl.addEventListener("click", startGame);

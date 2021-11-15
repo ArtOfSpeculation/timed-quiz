@@ -106,35 +106,22 @@ h2 {
 form {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     width: 100%;
-    margin: 15px 0;
-    padding: 10px 0;
+    font-size: 1.5rem;
+    padding: 1rem 0;
 }
 
-input[type=submit] { 
-    margin-left: 30px;
-    padding: 5px 20px;
-    background-color: var(--button-standard);
-    color: white;
-    border-radius: 0.5rem;
-}
-
-input[type=submit]:hover {
-    background-color: var(--button-hover);
-    box-shadow: 1px 1px 5px var(--button-shadow);
-    cursor: pointer;
-    transition: transform 500ms;
-    transform: scale(1.1);
-}
-
-label {
-    padding: 5px 0;
-    text-align: left;
-    width: 120px;
+button.submit-score {
+    margin: 0 20px;
+    height: 2.5rem;
+    padding: 0 20px;
 }
 
 input[type=text]{
-    padding: 5px;
-    text-align: center;
-    width: 50px;
-}
+    font-size: 1.5rem;
+    margin-left: 20px;
+    padding: 1rem 1.5rem;
+    height: 2rem;
+    width: 8rem;
+} 
