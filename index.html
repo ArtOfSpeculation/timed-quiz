@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./assets/js/script.js" defer></script>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <title>Timed Quiz</title>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="view-high-score">
+                <a href="./leaderboard.html" class="btn" id="leaderboard-btn">View high scores</a>
+            </div>
+            <div class="timer">
+                <p>Timer</p>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+         <h1 class="question-text">Coding Quiz Challenge</h1>
+         <div id="answer-buttons" class="btn hidden">
+            <button class="btn">Answer 1</button>
+            <button class="btn">Answer 2</button>
+            <button class="btn">Answer 3 one of the answers really really long</button>
+            <button class="btn">Answer 4</button>
+         </div>
+         <div class="text-container">
+             <p>
+                 Try to answer the following code-related questions within the time limit. </br>
+                 Keep in mind that incorrect answers will penalize your score/time by ten seconds.
+             </p>
+         </div>
+         <form class="hiddden">
+             <label for="initials">Enter initials:</label>
+             <input type="text" name="initials" value="" maxlength="3"/>
+             <input type="submit" value="Submit">
+         </form>
+         <h2 class="revealIfAnswerWasCorrect hidden"></h2> 
+        </main>
+    <button id="start-btn">Start Quiz</button>
+</body>
+</html>
