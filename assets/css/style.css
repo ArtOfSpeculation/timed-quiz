@@ -24,6 +24,10 @@ header {
     margin: 25px 50px;
 }
 
+header p span {
+    font-weight: 300;
+}
+
 #leaderboard-btn {
     text-decoration: none;
     color: orchid;

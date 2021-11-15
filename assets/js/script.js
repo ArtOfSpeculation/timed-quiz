@@ -1,3 +1,5 @@
+var viewHighScoresEl = document.querySelector(".view-high-score");
+var timeLeftEl = document.querySelector(".timer");
 var containerEl = document.querySelector(".container");
 var startButtonEl = document.querySelector("#start-btn");
 var questionTextEl = document.querySelector(".question-text");
@@ -55,32 +57,35 @@ var questionsArray = [
 ]
 var currentQuestionNumber = 0;
 var currentScore = 0;
-var timeOnClock = 10;
+var timeOnClock = 29;
 
 var endGame = function() {
-    console.log("the game is now over");
+    timeLeftEl.innerText = timeOnClock;
+    var finalScore = checkFinalScore(currentScore, timeOnClock);
+
     questionTextEl.innerText = "All done!";
-    textContainerEl.innerText = "Your final score is " + currentScore +" out of " + questionsArray.length + ".";
+    textContainerEl.innerText = "Your final score is " + finalScore +" (" + currentScore +" correct answers x " + timeOnClock +" seconds remaining)";
     textContainerEl.classList.add("left");
     textContainerEl.classList.remove("hidden");
     formEl.classList.remove("hidden");
-
+    localStorage.setItem('score', currentScore)
+    var currentHighScore = localStorage.getItem('highScore') ?? [];
 };
 
 var clearQuestion = function() {
     while(answerButtonsEl.firstChild) {
         answerButtonsEl.removeChild(answerButtonsEl.firstChild);
     }
-    if(currentQuestionNumber >= questionsArray.length) {
+    if(currentQuestionNumber >= questionsArray.length || timeOnClock <= 0) {
         endGame();
     }
 };
 
 var nextQuestion = function(question) {
+    if (currentQuestionNumber === 0) timeLeftEl.innerText = "30", startTimer();
     if (currentQuestionNumber >= questionsArray.length) return;
 
     clearQuestion();
-    // debugger
     questionTextEl.innerHTML = question.question;
     question.answers.forEach(answer => {
         var newButton = document.createElement("button");
@@ -101,7 +106,10 @@ var nextQuestion = function(question) {
             revealIfAnswerWasCorrectEl.innerText = "Correct!";
             revealIfAnswerWasCorrectEl.classList.remove("hidden");
         } else {
-            revealIfAnswerWasCorrectEl.innerText = "Wrong!", revealIfAnswerWasCorrectEl.classList.remove("hidden");
+            revealIfAnswerWasCorrectEl.innerText = "Wrong!";
+            timeOnClock -= 5;
+            if(timeOnClock < 0) timeOnClock = 0;
+            revealIfAnswerWasCorrectEl.classList.remove("hidden");
         }
         console.log(selectedButton.dataset.correct, currentScore);
         currentQuestionNumber++;
@@ -116,21 +124,39 @@ var nextQuestion = function(question) {
     var startGame = function() {
         startButtonEl.classList.add("hidden");
         textContainerEl.classList.add("hidden");
-        answerButtonsEl.classList.remove("hidden");
+        answerButtonsEl.classList.remove("hidden"); 
         questionTextEl.classList.add("question");
-        console.log(questionTextEl);
-            nextQuestion(questionsArray[currentQuestionNumber]);
+        nextQuestion(questionsArray[currentQuestionNumber]);
     };
 
-    var visitLeaderboard = function (){
-        console.log("Here is the leaderboard")
-        
+    var visitLeaderboard = function (event){
+        event.preventDefault();
+
         while(containerEl.firstChild) {
             console.log("removed something");
             containerEl.removeChild(containerEl.firstChild);
         }
+        containerEl.appendChild(questionTextEl);
         questionTextEl.innerText = "High scores"
     }
 
-submitScoreButtonEl.addEventListener("click", visitLeaderboard)
+    var startTimer = function() {
+        var countDown = setInterval(() => {
+            if(currentQuestionNumber >= questionsArray.length || timeOnClock <= 0) {
+                clearInterval(countDown); 
+                clearQuestion();
+            } else {
+                timeOnClock--;
+                timeLeftEl.innerText = timeOnClock;
+            }
+         }, 1000);
+    }
+
+    var checkFinalScore = function(numOfCorrectAnswers, timeLeftAtEnd) {
+        if(!timeLeftAtEnd) return 0;
+        return numOfCorrectAnswers * timeLeftAtEnd;
+    }
+
+submitScoreButtonEl.addEventListener("click", visitLeaderboard);
+viewHighScoresEl.addEventListener("click", visitLeaderboard);
 startButtonEl.addEventListener("click", startGame);
