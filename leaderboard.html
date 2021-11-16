@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./assets/js/leaderboard.js" defer></script>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <title>Timed Quiz</title>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="view-high-score">
+                <a href="./leaderboard.html" class="btn" id="leaderboard-btn">View high scores</a>
+            </div>
+            <div>
+                <p>Timer: <span class="timer">You will have 30-seconds</span></p>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+         <h1 class="question-text">Hall of Fame</h1>
+         <p>
+             Here are the most recently saved scores:
+         </p>
+         <div id="answer-buttons" class="btn hidden">
+            <button class="btn play-again">Play Again</button>
+         </div>
+        </main>
+        <button id="start-btn">Play Again</button>
+</body>
+</html>

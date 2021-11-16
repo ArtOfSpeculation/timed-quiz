@@ -51,6 +51,7 @@ main p {
 
 .container {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     margin: auto;
@@ -70,7 +71,7 @@ button {
     border-radius: 0.75rem;
     color: white;
     font-size: 1.5rem;
-    padding: 1rem 1.5rem;
+    padding: 1rem 3rem;
     margin-bottom: 20px;
 }
 
@@ -85,11 +86,12 @@ button:hover {
 #answer-buttons.btn {
     display: flex;
     flex-direction: column;
+    align-self: flex-start;
 }
 
 #start-btn {
     display: flex;
-    margin: auto;
+    margin: 30px auto 0;
 }
 
 .hidden {
@@ -122,6 +124,17 @@ button.submit-score {
     padding: 0 20px;
 }
 
+button.high-score {
+    width: 300px;
+    align-self: center;
+    background-color: orchid;
+}
+
+button.high-score:hover {
+    box-shadow: none;
+    cursor: pointer;
+    transform: none;
+}
 input[type=text]{
     font-size: 1.5rem;
     margin-left: 20px;

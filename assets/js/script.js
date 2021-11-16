@@ -8,6 +8,8 @@ var textContainerEl = document.querySelector(".text-container");
 var formEl = document.querySelector("form");
 var revealIfAnswerWasCorrectEl = document.querySelector(".revealIfAnswerWasCorrect");
 var submitScoreButtonEl = document.querySelector(".submit-score");
+
+// QUESTIONS: New questions can be added below
 var questionsArray = [
     {
         question: "Commonly used data types do NOT include:",
@@ -57,34 +59,45 @@ var questionsArray = [
 ]
 var currentQuestionNumber = 0;
 var currentScore = 0;
-var timeOnClock = 29;
+var finalScore = 0;
+var timeOnClock = 30;
+var highScores = [];
 
-var endGame = function() {
-    timeLeftEl.innerText = timeOnClock;
-    var finalScore = checkFinalScore(currentScore, timeOnClock);
+var startGame = function() {
+    startButtonEl.classList.add("hidden");
+    textContainerEl.classList.add("hidden");
+    answerButtonsEl.classList.remove("hidden"); 
+    questionTextEl.classList.add("question");
+    clearQuestion();
+    nextQuestion(questionsArray[currentQuestionNumber]);
+};
 
-    questionTextEl.innerText = "All done!";
-    textContainerEl.innerText = "Your final score is " + finalScore +" (" + currentScore +" correct answers x " + timeOnClock +" seconds remaining)";
-    textContainerEl.classList.add("left");
-    textContainerEl.classList.remove("hidden");
-    formEl.classList.remove("hidden");
-    localStorage.setItem('score', currentScore)
-    var currentHighScore = localStorage.getItem('highScore') ?? [];
+var startTimer = function() {
+    var countDown = setInterval(() => {
+        if(currentQuestionNumber >= questionsArray.length || timeOnClock <= 0) {
+            clearInterval(countDown); // Stop the clock
+            clearQuestion(); // Clear the question
+            endGame(); // End the game
+        } else {
+            timeOnClock--;
+            timeLeftEl.innerText = timeOnClock;
+        }
+    }, 1000);
 };
 
 var clearQuestion = function() {
     while(answerButtonsEl.firstChild) {
         answerButtonsEl.removeChild(answerButtonsEl.firstChild);
     }
-    if(currentQuestionNumber >= questionsArray.length || timeOnClock <= 0) {
-        endGame();
-    }
 };
 
 var nextQuestion = function(question) {
     if (currentQuestionNumber === 0) timeLeftEl.innerText = "30", startTimer();
-    if (currentQuestionNumber >= questionsArray.length) return;
-
+    if (currentQuestionNumber >= questionsArray.length) {
+        clearQuestion();
+        endGame()
+        return
+    };
     clearQuestion();
     questionTextEl.innerHTML = question.question;
     question.answers.forEach(answer => {
@@ -96,67 +109,84 @@ var nextQuestion = function(question) {
         }
         newButton.addEventListener("click", checkAnswer);
         answerButtonsEl.appendChild(newButton);
+    })
+}
+
+var checkAnswer = function(event) {
+    selectedButton = event.target;
+    if (selectedButton.dataset.correct) {
+        currentScore += 1;
+        revealIfAnswerWasCorrectEl.innerText = "Correct!";
+    } else {
+        revealIfAnswerWasCorrectEl.innerText = "Wrong!";
+        timeOnClock -= 5;
+        if(timeOnClock < 0) timeOnClock = 0;
     }
-    )}
-    
-    var checkAnswer = function (event) {
-        selectedButton = event.target;
-        if (selectedButton.dataset.correct) {
-            currentScore += 1;
-            revealIfAnswerWasCorrectEl.innerText = "Correct!";
-            revealIfAnswerWasCorrectEl.classList.remove("hidden");
-        } else {
-            revealIfAnswerWasCorrectEl.innerText = "Wrong!";
-            timeOnClock -= 5;
-            if(timeOnClock < 0) timeOnClock = 0;
-            revealIfAnswerWasCorrectEl.classList.remove("hidden");
-        }
-        console.log(selectedButton.dataset.correct, currentScore);
-        currentQuestionNumber++;
-        if (timeOnClock > 0 && currentQuestionNumber<questionsArray.length) {
-            nextQuestion(questionsArray[currentQuestionNumber]);
-        } else {
-            clearQuestion();
-        }
-        
+    revealIfAnswerWasCorrectEl.classList.remove("hidden");
+    currentQuestionNumber++;
+    nextQuestion(questionsArray[currentQuestionNumber]);
+};
+
+var endGame = function() {
+    timeLeftEl.innerText = timeOnClock;
+    finalScore = checkFinalScore(currentScore, timeOnClock);
+    questionTextEl.innerText = "All done!";
+    textContainerEl.innerText = "Your final score is " + finalScore +" (" + currentScore +" correct answers x " + timeOnClock +" seconds remaining)";
+    textContainerEl.classList.add("left");
+    textContainerEl.classList.remove("hidden");
+    startButtonEl.classList.remove("hidden");
+    startButtonEl.innerText = "Play Again";
+    startButtonEl.addEventListener("click", playAgain);
+    if(finalScore) {
+        formEl.classList.remove("hidden");
+    } else {
+        textContainerEl.innerText = "Your final score is 0. Study up and try again!";
     }
-    
-    var startGame = function() {
-        startButtonEl.classList.add("hidden");
-        textContainerEl.classList.add("hidden");
-        answerButtonsEl.classList.remove("hidden"); 
-        questionTextEl.classList.add("question");
-        nextQuestion(questionsArray[currentQuestionNumber]);
+};
+
+var playAgain = function() {
+    location.reload();
+}
+
+var checkFinalScore = function(numOfCorrectAnswers, timeLeftAtEnd) {
+    if(!timeLeftAtEnd) return 0;
+    return numOfCorrectAnswers * timeLeftAtEnd;
+}
+
+var submitHighScore = function(event) {
+    event.preventDefault();
+    var initials = document.querySelector("input[name='initials']").value;
+    var highScore = [
+        {
+        name: initials,
+        score: finalScore
+        }
+    ]
+    highScores.push(highScore)
+    loadHighScores();
+    saveHighScores(highScores);
+    visitLeaderboard();
+}
+
+var loadHighScores = function () {
+    var savedHighScoresString = localStorage.getItem("high-scores") ?? [];
+    if (savedHighScoresString.length === 0) return
+    savedHighScores = JSON.parse(savedHighScoresString);  
+    for (var i = 0; i < savedHighScores.length; i++) {
+        highScores.push(savedHighScores[i]);
     };
+    console.log(highScores)
+};
 
-    var visitLeaderboard = function (event){
-        event.preventDefault();
+var saveHighScores = function (scores) {
+    var scoresString = JSON.stringify(scores);
+    localStorage.setItem("high-scores", scoresString)
+}
 
-        while(containerEl.firstChild) {
-            console.log("removed something");
-            containerEl.removeChild(containerEl.firstChild);
-        }
-        containerEl.appendChild(questionTextEl);
-        questionTextEl.innerText = "High scores"
-    }
+var visitLeaderboard = function(){
+    location.href = "./leaderboard.html";
+}
 
-    var startTimer = function() {
-        var countDown = setInterval(() => {
-            if(currentQuestionNumber >= questionsArray.length || timeOnClock <= 0) {
-                clearInterval(countDown); 
-                clearQuestion();
-            } else {
-                timeOnClock--;
-                timeLeftEl.innerText = timeOnClock;
-            }
-         }, 1000);
-    }
-
-    var checkFinalScore = function(numOfCorrectAnswers, timeLeftAtEnd) {
-        if(!timeLeftAtEnd) return 0;
-        return numOfCorrectAnswers * timeLeftAtEnd;
-    }
-
-submitScoreButtonEl.addEventListener("click", visitLeaderboard);
+if(submitScoreButtonEl) submitScoreButtonEl.addEventListener("click", submitHighScore);
+if(startButtonEl) startButtonEl.addEventListener("click", startGame);
 viewHighScoresEl.addEventListener("click", visitLeaderboard);
-startButtonEl.addEventListener("click", startGame);
